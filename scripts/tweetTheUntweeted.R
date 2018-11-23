@@ -1,29 +1,41 @@
+specieslist = as.data.frame(0)
+speciestweets = as.data.frame(0)
+mytweets = as.data.frame(0)
 
-speciesList <- read.csv("data/SpeciesList.csv")
+specieslist <- read.csv("data/SpeciesList.csv")
+mytweets <- get_my_timeline()
 
-species_name = as.character(0)
-species_tweet = as.data.frame(0)
+library(dplyr)
 
 for (i in 1:10){ #nrow(speciesList)) {
-  species_name = as.character(speciesList$Genus_species[i])
-  print(species_name)
-  species_tweet = search_tweets(species_name)
-  print(nrow(species_tweet))
   
-  print(species_tweet$text)
-#  post_tweet(status = paste("My first retweet from R for #untweetableSpecies ", species_tweet$status_url))  
+  speciesname = as.character(specieslist$Genus_species[i])
+  print(paste("i=",i,"|",speciesname))
+  speciestweets = search_tweets(speciesname)
+  
+  if(nrow(speciestweets) > 0) {
+    for (j in 1:nrow(speciestweets)) {
+      # check if this is one of our tweets
+      thisscreenname = as.character(speciestweets$screen_name[j])
+      print(thisscreenname)
+      if (thisscreenname != my_screen_name) {
+        post_tweet(status = paste("Another #untweetableSpecies ", speciestweets$status_url[j]))
+      } else {
+        print("already posted that one")
+      }
+    }
+  }
+}
 
-  nrow(get_my_timeline())
+#  post_tweet(status = paste("My first retweet from R for #untweetableSpecies ", species_tweet$status_url))  
 #  get_timeline('Untweeted Australian Species', n = 100, max_id = NULL, home = FALSE,
 #               parse = TRUE, check = TRUE, token = NULL, ...)
   
-#  if
   
-  for(t in species_tweet)
-  {
-    (tweetId  <- t$status_id)
-    (tweetUrl <- t$status_url)
-    (twwetText = t$text)
-  }
+#  for(t in species_tweet)
+#  {
+#    (tweetId  <- t$status_id)
+#    (tweetUrl <- t$status_url)
+#    (twwetText = t$text)
+#  }
   
-}
